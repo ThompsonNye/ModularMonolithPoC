@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="ModularMonolithPoC.ApiService/ModularMonolithPoC.ApiService.csproj" />
+  <Project Path="ModularMonolithPoC.AppHost/ModularMonolithPoC.AppHost.csproj" />
+  <Project Path="ModularMonolithPoC.ServiceDefaults/ModularMonolithPoC.ServiceDefaults.csproj" />
+  <Project Path="ModularMonolithPoC.Tests/ModularMonolithPoC.Tests.csproj" />
+  <Project Path="ModularMonolithPoC.Web/ModularMonolithPoC.Web.csproj" />
+</Solution>
