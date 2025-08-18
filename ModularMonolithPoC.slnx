@@ -1,7 +1,9 @@
 <Solution>
+  <Folder Name="/Aspire Hosting/">
+    <Project Path="AspireHosting/ModularMonolithPoC.AppHost/ModularMonolithPoC.AppHost.csproj" />
+    <Project Path="AspireHosting/ModularMonolithPoC.ServiceDefaults/ModularMonolithPoC.ServiceDefaults.csproj" />
+  </Folder>
   <Project Path="ModularMonolithPoC.ApiService/ModularMonolithPoC.ApiService.csproj" />
-  <Project Path="ModularMonolithPoC.AppHost/ModularMonolithPoC.AppHost.csproj" />
-  <Project Path="ModularMonolithPoC.ServiceDefaults/ModularMonolithPoC.ServiceDefaults.csproj" />
   <Project Path="ModularMonolithPoC.Tests/ModularMonolithPoC.Tests.csproj" />
   <Project Path="ModularMonolithPoC.Web/ModularMonolithPoC.Web.csproj" />
 </Solution>
