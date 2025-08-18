@@ -27,5 +27,6 @@ if (app.Environment.IsDevelopment())
 
 app.MapDefaultEndpoints();
 
-app.Run();
+app.UsePersonsModule();
 
+app.Run();
