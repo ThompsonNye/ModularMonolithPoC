@@ -3,6 +3,11 @@
     <Project Path="AspireHosting/ModularMonolithPoC.AppHost/ModularMonolithPoC.AppHost.csproj" />
     <Project Path="AspireHosting/ModularMonolithPoC.ServiceDefaults/ModularMonolithPoC.ServiceDefaults.csproj" />
   </Folder>
+  <Folder Name="/Modules/">
+    <Project Path="Modules/EligibilityProcessing/ModularMonolithPoC.EligibilityProcessing.csproj" Id="b937f635-bcee-404c-a550-2d29ad0c0dea" />
+    <Project Path="Modules/Persons/ModularMonolithPoC.Persons.csproj" Id="645b5d06-f9b8-423b-8177-751110e24e87" />
+  </Folder>
+  <Project Path="ModularMonolithPoC.ApiService.Contracts/ModularMonolithPoC.ApiService.Contracts.csproj" />
   <Project Path="ModularMonolithPoC.ApiService/ModularMonolithPoC.ApiService.csproj" />
   <Project Path="ModularMonolithPoC.Tests/ModularMonolithPoC.Tests.csproj" />
   <Project Path="ModularMonolithPoC.Web/ModularMonolithPoC.Web.csproj" />

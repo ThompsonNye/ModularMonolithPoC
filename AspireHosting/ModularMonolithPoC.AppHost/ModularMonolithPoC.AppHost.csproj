@@ -12,13 +12,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ModularMonolithPoC.ApiService\ModularMonolithPoC.ApiService.csproj" />
-    <ProjectReference Include="..\ModularMonolithPoC.Web\ModularMonolithPoC.Web.csproj" />
+    <ProjectReference Include="..\..\ModularMonolithPoC.ApiService\ModularMonolithPoC.ApiService.csproj" />
+    <ProjectReference Include="..\..\ModularMonolithPoC.Web\ModularMonolithPoC.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.0.0" />
-    <PackageReference Include="Aspire.Hosting.Redis" Version="9.0.0" />
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.4.1" />
+    <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.4.1" />
+    <PackageReference Include="Aspire.Hosting.Redis" Version="9.4.1" />
   </ItemGroup>
 
 </Project>
