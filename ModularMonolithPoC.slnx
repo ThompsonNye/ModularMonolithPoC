@@ -7,6 +7,9 @@
     <Project Path="Modules/EligibilityProcessing/ModularMonolithPoC.EligibilityProcessing.csproj" Id="b937f635-bcee-404c-a550-2d29ad0c0dea" />
     <Project Path="Modules/Persons/ModularMonolithPoC.Persons.csproj" Id="645b5d06-f9b8-423b-8177-751110e24e87" />
   </Folder>
+  <Folder Name="/_Solution Items/">
+    <File Path="README.md" />
+  </Folder>
   <Project Path="ModularMonolithPoC.ApiService.Contracts/ModularMonolithPoC.ApiService.Contracts.csproj" />
   <Project Path="ModularMonolithPoC.ApiService/ModularMonolithPoC.ApiService.csproj" />
   <Project Path="ModularMonolithPoC.Tests/ModularMonolithPoC.Tests.csproj" />
