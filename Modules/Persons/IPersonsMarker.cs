@@ -1,2 +1,3 @@
 ﻿namespace ModularMonolithPoC.Persons;
-internal interface IPersonsMarker;
+
+public interface IPersonsMarker;

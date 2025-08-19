@@ -7,6 +7,11 @@ builder.AddServiceDefaults();
 
 builder.AddPersonsModule();
 
+builder.Services.AddMediatR(cfg =>
+{
+	cfg.RegisterServicesFromAssemblyContaining<IPersonsMarker>();
+});
+
 builder.Services.AddHostedService<StartupTaskRunner>();
 
 // Add services to the container.

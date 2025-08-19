@@ -19,52 +19,55 @@ public static class ServiceRegistrationExtensions
 
 	public static WebApplication UsePersonsModule(this WebApplication app)
 	{
-		var personsApis = app.MapGroup("/persons");
-
-		personsApis.MapGet("/", GetPersonsAsync);
-
-		personsApis.MapPost("/", CreatePersonAsync);
-
-		personsApis.MapDelete("/{personId}", DeletePersonAsync);
-
+		MapEndpoints(app);
 		return app;
 	}
 
-	private static async Task<IResult> GetPersonsAsync(PersonsDbContext db, CancellationToken cancellationToken)
+	private static void MapEndpoints(WebApplication app)
 	{
-		var persons = await db.Persons.ToListAsync(cancellationToken);
-		return TypedResults.Ok(persons);
-	}
+		var personsApis = app.MapGroup("/persons");
 
-	private static async Task<IResult> CreatePersonAsync(Person person, PersonsDbContext personsDbContext, CancellationToken cancellationToken)
-	{
-		var exists = await personsDbContext.Persons.AnyAsync(
-		p => p.Id == person.Id || p.Name.ToLower() == person.Name.ToLower(),
-		cancellationToken);
+		personsApis.MapGet("/", GetPersonsAsync);
+		personsApis.MapPost("/", CreatePersonAsync);
+		personsApis.MapDelete("/{personId}", DeletePersonAsync);
 
-		if (exists)
+		async Task<IResult> GetPersonsAsync(PersonsDbContext db, CancellationToken cancellationToken)
 		{
-			return TypedResults.Conflict();
+			var persons = await db.Persons.ToListAsync(cancellationToken);
+			return TypedResults.Ok(persons);
 		}
 
-		personsDbContext.Persons.Add(person);
-		await personsDbContext.SaveChangesAsync(cancellationToken);
-
-		return TypedResults.Created("/persons", person);
-	}
-
-	private static async Task<IResult> DeletePersonAsync(Guid personId, PersonsDbContext personsDbContext, CancellationToken cancellationToken)
-	{
-		var person = await personsDbContext.Persons.FindAsync([personId], cancellationToken);
-
-		if (person is null)
+		async Task<IResult> CreatePersonAsync(Person person, PersonsDbContext personsDbContext, CancellationToken cancellationToken)
 		{
-			return TypedResults.NotFound();
+			var exists = await personsDbContext.Persons.AnyAsync(
+			p => p.Id == person.Id || p.Name.ToLower() == person.Name.ToLower(),
+			cancellationToken);
+
+			if (exists)
+			{
+				return TypedResults.Conflict();
+			}
+
+			personsDbContext.Persons.Add(person);
+			await personsDbContext.SaveChangesAsync(cancellationToken);
+
+			return TypedResults.Created("/persons", person);
 		}
 
-		personsDbContext.Persons.Remove(person);
-		await personsDbContext.SaveChangesAsync(cancellationToken);
+		async Task<IResult> DeletePersonAsync(Guid personId, PersonsDbContext personsDbContext, CancellationToken cancellationToken)
+		{
+			var person = await personsDbContext.Persons.FindAsync([personId], cancellationToken);
 
-		return TypedResults.NoContent();
+			if (person is null)
+			{
+				return TypedResults.NotFound();
+			}
+
+			personsDbContext.Persons.Remove(person);
+			await personsDbContext.SaveChangesAsync(cancellationToken);
+
+			return TypedResults.NoContent();
+		}
 	}
+
 }
