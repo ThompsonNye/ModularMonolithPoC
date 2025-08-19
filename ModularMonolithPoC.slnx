@@ -8,6 +8,7 @@
     <Project Path="Modules/Persons/ModularMonolithPoC.Persons.csproj" Id="645b5d06-f9b8-423b-8177-751110e24e87" />
   </Folder>
   <Folder Name="/_Solution Items/">
+    <File Path="nuget.config" />
     <File Path="README.md" />
   </Folder>
   <Project Path="ModularMonolithPoC.ApiService.Contracts/ModularMonolithPoC.ApiService.Contracts.csproj" />
