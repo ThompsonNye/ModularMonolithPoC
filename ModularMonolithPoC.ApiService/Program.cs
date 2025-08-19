@@ -1,3 +1,4 @@
+using ModularMonolithPoC.EligibilityProcessing;
 using ModularMonolithPoC.Persons;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 
 builder.AddPersonsModule();
+builder.AddEligibilityProcessingModule();
 
 builder.Services.AddMediatR(cfg =>
 {
@@ -33,5 +35,6 @@ if (app.Environment.IsDevelopment())
 app.MapDefaultEndpoints();
 
 app.UsePersonsModule();
+app.UseEligibilityProcessingModule();
 
 app.Run();
