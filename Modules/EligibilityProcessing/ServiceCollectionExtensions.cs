@@ -1,13 +1,14 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using ModularMonolithPoC.Persons.Contracts;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ModularMonolithPoC.EligibilityProcessing;
 public static class ServiceRegistrationExtensions
 {
 	public static WebApplicationBuilder AddEligibilityProcessingModule(this WebApplicationBuilder builder)
 	{
+		builder.Services.AddScoped<IPersonsRetriever, MediatRPersonsRetriever>();
+
 		return builder;
 	}
 
@@ -23,9 +24,9 @@ public static class ServiceRegistrationExtensions
 
 		eligibilityApis.MapGet("/all/mediatr", GetAllPersonsWithEligibility);
 
-		async Task<IResult> GetAllPersonsWithEligibility(IMediator mediator, CancellationToken cancellationToken)
+		async Task<IResult> GetAllPersonsWithEligibility(IPersonsRetriever personsRetriever, CancellationToken cancellationToken)
 		{
-			var persons = await mediator.Send(new ListAllPersonsQuery(), cancellationToken);
+			var persons = await personsRetriever.GetAllPersonsAsync(cancellationToken);
 
 			var random = new Random(42);
 
