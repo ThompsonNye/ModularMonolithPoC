@@ -3,7 +3,7 @@ using ModularMonolithPoC.ApiService.Contracts;
 
 namespace ModularMonolithPoC.ApiService;
 
-internal sealed class MigrateDatabaseStartupTask : IStartupTask
+public sealed class MigrateDatabaseStartupTask : IStartupTask
 {
 	public async Task RunAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken)
 	{

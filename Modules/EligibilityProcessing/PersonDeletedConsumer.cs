@@ -4,7 +4,7 @@ using ModularMonolithPoC.Persons.Contracts;
 
 namespace ModularMonolithPoC.EligibilityProcessing;
 
-internal sealed class PersonDeletedConsumer(
+public sealed class PersonDeletedConsumer(
 	MaterializedPersonsDbContext materializedPersonsDbContext,
 	ILogger<PersonUpdatedConsumer> logger)
 	: IConsumer<PersonDeleted>

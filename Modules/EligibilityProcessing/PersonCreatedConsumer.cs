@@ -2,7 +2,7 @@
 using ModularMonolithPoC.Persons.Contracts;
 
 namespace ModularMonolithPoC.EligibilityProcessing;
-internal sealed class PersonCreatedConsumer(MaterializedPersonsDbContext materializedPersonsDbContext)
+public sealed class PersonCreatedConsumer(MaterializedPersonsDbContext materializedPersonsDbContext)
 	: IConsumer<PersonCreated>
 {
 	public async Task Consume(ConsumeContext<PersonCreated> context)

@@ -1,5 +1,5 @@
 ﻿namespace ModularMonolithPoC.EligibilityProcessing;
-internal interface IPersonsRetriever
+public interface IPersonsRetriever
 {
 	Task<ICollection<Person>> GetAllPersonsAsync(CancellationToken cancellationToken);
 }

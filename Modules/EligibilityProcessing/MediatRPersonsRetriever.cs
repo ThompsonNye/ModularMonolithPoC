@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace ModularMonolithPoC.EligibilityProcessing;
 
-internal sealed class MediatRPersonsRetriever(
+public sealed class MediatRPersonsRetriever(
 	ISender sender,
 	ActivitySource activitySource)
 	: IPersonsRetriever

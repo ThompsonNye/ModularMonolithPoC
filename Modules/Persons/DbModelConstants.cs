@@ -1,6 +1,6 @@
 ﻿namespace ModularMonolithPoC.Persons;
 
-internal static class DbModelConstants
+public static class DbModelConstants
 {
 	public const int NAME_MAX_LENGTH = 100;
 }

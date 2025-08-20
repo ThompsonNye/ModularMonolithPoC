@@ -88,7 +88,7 @@ builder.Services.AddMassTransit(x =>
 //			.UseBusOutbox();
 //	});
 //});
-builder.Services.AddTransient<IStartupTask, MigrateDatabaseStartupTask>();
+builder.Services.AddTransient<IStartupTask, ModularMonolithPoC.ApiService.MigrateDatabaseStartupTask>();
 
 builder.Services.AddHostedService<StartupTaskRunner>();
 
