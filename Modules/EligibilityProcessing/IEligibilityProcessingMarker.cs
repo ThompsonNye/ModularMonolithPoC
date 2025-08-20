@@ -1,0 +1,2 @@
+﻿namespace ModularMonolithPoC.EligibilityProcessing;
+internal interface IEligibilityProcessingMarker;

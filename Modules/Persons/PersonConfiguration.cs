@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ModularMonolithPoC.Persons;
 
-internal sealed class PersonsConfiguration : IEntityTypeConfiguration<Person>
+internal sealed class PersonConfiguration : IEntityTypeConfiguration<Person>
 {
 	public void Configure(EntityTypeBuilder<Person> builder)
 	{

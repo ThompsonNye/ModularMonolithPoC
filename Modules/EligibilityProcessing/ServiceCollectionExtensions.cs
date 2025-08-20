@@ -1,13 +1,18 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using ModularMonolithPoC.ApiService.Contracts;
 
 namespace ModularMonolithPoC.EligibilityProcessing;
 public static class ServiceRegistrationExtensions
 {
 	public static WebApplicationBuilder AddEligibilityProcessingModule(this WebApplicationBuilder builder)
 	{
+		builder.AddNpgsqlDbContext<MaterializedPersonsDbContext>("postgres");
+
 		builder.Services.AddScoped<IPersonsRetriever, MediatRPersonsRetriever>();
+		builder.Services.AddTransient<IStartupTask, MigrateDatabaseStartupTask>();
 
 		return builder;
 	}
