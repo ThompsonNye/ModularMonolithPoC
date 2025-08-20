@@ -24,7 +24,6 @@ builder.Services.AddMassTransit(x =>
 	x.SetKebabCaseEndpointNameFormatter();
 
 	x.AddConsumersFromAssemblyContaining<IEligibilityProcessingMarker>();
-	//x.AddConsumers([typeof(IEligibilityProcessingMarker).Assembly]);
 
 	//x.AddEntityFrameworkOutbox<MasstransitDbContext>(o =>
 	//{
@@ -32,6 +31,11 @@ builder.Services.AddMassTransit(x =>
 	//	o.DuplicateDetectionWindow = TimeSpan.FromMinutes(30);
 	//	o.UsePostgres();
 	//	o.UseBusOutbox();
+	//});
+
+	//x.AddConfigureEndpointsCallback((context, _, cfg) =>
+	//{
+	//	cfg.UseEntityFrameworkOutbox<MasstransitDbContext>(context);
 	//});
 
 	x.UsingRabbitMq((context, cfg) =>

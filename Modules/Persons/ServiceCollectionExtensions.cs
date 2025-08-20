@@ -52,6 +52,9 @@ public static class ServiceRegistrationExtensions
 
 			personsDbContext.Persons.Add(person);
 
+			// TODO: Remove when using transactional outbox
+			await personsDbContext.SaveChangesAsync(cancellationToken);
+
 			var personCreatedEvent = new PersonCreated
 			{
 				PersonId = person.Id,
@@ -59,7 +62,8 @@ public static class ServiceRegistrationExtensions
 			};
 			await publishEndpoint.Publish(personCreatedEvent, cancellationToken);
 
-			await personsDbContext.SaveChangesAsync(cancellationToken);
+			// TODO: Uncomment when using transactional outbox
+			//await personsDbContext.SaveChangesAsync(cancellationToken);
 
 			return TypedResults.Created("/persons", person);
 		}
