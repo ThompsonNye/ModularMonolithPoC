@@ -33,6 +33,7 @@ builder.Services.AddMassTransit(x =>
 	//	o.UsePostgres()
 	//		.UseBusOutbox();
 	//});
+	x.AddInMemoryInboxOutbox();
 
 	x.UsingRabbitMq((context, cfg) =>
 	{
