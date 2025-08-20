@@ -1,6 +1,6 @@
 ﻿namespace ModularMonolithPoC.Persons;
 
-public sealed record Person
+internal sealed record Person
 {
 	public required Guid Id { get; init; }
 

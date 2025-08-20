@@ -2,7 +2,7 @@
 
 namespace ModularMonolithPoC.Persons;
 
-public sealed class PersonsDbContext(DbContextOptions<PersonsDbContext> options) : DbContext(options)
+internal sealed class PersonsDbContext(DbContextOptions<PersonsDbContext> options) : DbContext(options)
 {
 	public DbSet<Person> Persons => Set<Person>();
 

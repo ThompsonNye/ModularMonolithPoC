@@ -4,7 +4,7 @@ using ModularMonolithPoC.Persons.Contracts;
 
 namespace ModularMonolithPoC.EligibilityProcessing;
 
-public sealed class PersonUpdatedConsumer(
+internal sealed class PersonUpdatedConsumer(
 	MaterializedPersonsDbContext materializedPersonsDbContext,
 	ILogger<PersonUpdatedConsumer> logger)
 	: IConsumer<PersonUpdated>

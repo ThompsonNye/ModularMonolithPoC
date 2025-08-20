@@ -4,7 +4,7 @@ using ModularMonolithPoC.Persons.Contracts;
 using System.Diagnostics;
 
 namespace ModularMonolithPoC.Persons;
-public class ListAllPersonsQueryHandler(
+internal class ListAllPersonsQueryHandler(
 	PersonsDbContext personsDbContext,
 	ActivitySource activitySource)
 	: IRequestHandler<ListAllPersonsQuery, ICollection<PersonDto>>

@@ -1,7 +1,7 @@
 using ModularMonolithPoC.ApiService.Contracts;
 using System.Diagnostics;
 
-public sealed class StartupTaskRunner(
+internal sealed class StartupTaskRunner(
 	IServiceProvider serviceProvider,
 	IEnumerable<IStartupTask> startupTasks,
 	ILogger<StartupTaskRunner> logger,

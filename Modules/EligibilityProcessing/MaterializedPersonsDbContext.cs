@@ -2,7 +2,7 @@
 
 namespace ModularMonolithPoC.EligibilityProcessing;
 
-public sealed class MaterializedPersonsDbContext(DbContextOptions<MaterializedPersonsDbContext> options) : DbContext(options)
+internal sealed class MaterializedPersonsDbContext(DbContextOptions<MaterializedPersonsDbContext> options) : DbContext(options)
 {
 	public DbSet<Person> Persons => Set<Person>();
 
