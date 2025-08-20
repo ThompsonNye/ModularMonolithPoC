@@ -51,6 +51,7 @@ public static class ServiceRegistrationExtensions
 			}
 
 			personsDbContext.Persons.Add(person);
+			await personsDbContext.SaveChangesAsync(cancellationToken);
 
 			var personCreatedEvent = new PersonCreated
 			{
@@ -59,7 +60,6 @@ public static class ServiceRegistrationExtensions
 			};
 			await publishEndpoint.Publish(personCreatedEvent, cancellationToken);
 
-			await personsDbContext.SaveChangesAsync(cancellationToken);
 
 			return TypedResults.Created("/persons", person);
 		}

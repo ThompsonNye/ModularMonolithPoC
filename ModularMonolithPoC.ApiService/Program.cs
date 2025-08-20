@@ -23,15 +23,16 @@ builder.Services.AddMassTransit(x =>
 {
 	x.SetKebabCaseEndpointNameFormatter();
 
-	x.AddPublicAndInternalConsumersFromAssemblyContaining<IEligibilityProcessingMarker>();
+	//x.AddConsumersFromAssemblyContaining<IEligibilityProcessingMarker>();
+	x.AddConsumers([typeof(IEligibilityProcessingMarker).Assembly]);
 
-	x.AddEntityFrameworkOutbox<MasstransitDbContext>(o =>
-	{
-		o.QueryDelay = TimeSpan.FromSeconds(5);
-		o.DuplicateDetectionWindow = TimeSpan.FromMinutes(30);
-		o.UsePostgres()
-			.UseBusOutbox();
-	});
+	//x.AddEntityFrameworkOutbox<MasstransitDbContext>(o =>
+	//{
+	//	o.QueryDelay = TimeSpan.FromSeconds(5);
+	//	o.DuplicateDetectionWindow = TimeSpan.FromMinutes(30);
+	//	o.UsePostgres()
+	//		.UseBusOutbox();
+	//});
 
 	x.UsingRabbitMq((context, cfg) =>
 	{
