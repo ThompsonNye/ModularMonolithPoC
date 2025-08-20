@@ -4,9 +4,9 @@ using ModularMonolithPoC.Persons.Contracts;
 
 namespace ModularMonolithPoC.EligibilityProcessing;
 
-internal sealed class PersonDeletedHandler(
+internal sealed class PersonDeletedConsumer(
 	MaterializedPersonsDbContext materializedPersonsDbContext,
-	ILogger<PersonUpdatedHandler> logger)
+	ILogger<PersonUpdatedConsumer> logger)
 	: IConsumer<PersonDeleted>
 {
 	public async Task Consume(ConsumeContext<PersonDeleted> context)

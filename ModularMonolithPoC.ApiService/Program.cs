@@ -23,7 +23,7 @@ builder.Services.AddMassTransit(x =>
 {
 	x.SetKebabCaseEndpointNameFormatter();
 
-	x.AddConsumers(typeof(IEligibilityProcessingMarker).Assembly);
+	x.AddPublicAndInternalConsumersFromAssemblyContaining<IEligibilityProcessingMarker>();
 
 	x.AddEntityFrameworkOutbox<MasstransitDbContext>(o =>
 	{
@@ -36,10 +36,26 @@ builder.Services.AddMassTransit(x =>
 	x.UsingRabbitMq((context, cfg) =>
 	{
 		var rabbitMqConnectionString = builder.Configuration.GetConnectionString("rabbitmq");
+		var rabbitMqUri = new Uri(rabbitMqConnectionString!);
+
+		var userInfo = rabbitMqUri.UserInfo;
+		var firstColonIndex = userInfo.IndexOf(':');
+		if (firstColonIndex == -1)
+		{
+			throw new ArgumentException("Could not identify username and password from rabbit mq connection string");
+		}
+
+		var username = userInfo[..firstColonIndex];
+		var password = userInfo[(firstColonIndex + 1)..];
 
 		cfg.Host(
-			new Uri(rabbitMqConnectionString!),
-			"/");
+			new Uri($"{rabbitMqUri.Scheme}://{rabbitMqUri.Host}:{rabbitMqUri.Port}"),
+			"/",
+			hostConfig =>
+			{
+				hostConfig.Username(username);
+				hostConfig.Password(password);
+			});
 
 		//cfg.UseConsumeFilter(typeof(ValidationFilter<>), context);
 
