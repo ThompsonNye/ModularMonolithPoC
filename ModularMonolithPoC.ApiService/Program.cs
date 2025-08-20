@@ -1,5 +1,9 @@
+using MassTransit;
+using ModularMonolithPoC.ApiService;
+using ModularMonolithPoC.ApiService.Contracts;
 using ModularMonolithPoC.EligibilityProcessing;
 using ModularMonolithPoC.Persons;
+using System.ComponentModel.DataAnnotations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +17,62 @@ builder.Services.AddMediatR(cfg =>
 {
 	cfg.RegisterServicesFromAssemblyContaining<IPersonsMarker>();
 });
+
+builder.AddNpgsqlDbContext<MasstransitDbContext>("postgres");
+builder.Services.AddMassTransit(x =>
+{
+	x.SetKebabCaseEndpointNameFormatter();
+
+	x.AddConsumers(typeof(IEligibilityProcessingMarker).Assembly);
+
+	x.AddEntityFrameworkOutbox<MasstransitDbContext>(o =>
+	{
+		o.QueryDelay = TimeSpan.FromSeconds(5);
+		o.DuplicateDetectionWindow = TimeSpan.FromMinutes(30);
+		o.UsePostgres()
+			.UseBusOutbox();
+	});
+
+	x.UsingRabbitMq((context, cfg) =>
+	{
+		var rabbitMqConnectionString = builder.Configuration.GetConnectionString("rabbitmq");
+
+		cfg.Host(
+			new Uri(rabbitMqConnectionString!),
+			"/");
+
+		//cfg.UseConsumeFilter(typeof(ValidationFilter<>), context);
+
+		cfg.UseDelayedRedelivery(r =>
+		{
+			r.Intervals(
+				TimeSpan.FromMinutes(5),
+				TimeSpan.FromMinutes(15),
+				TimeSpan.FromMinutes(30));
+			r.Ignore<ValidationException>();
+		});
+		cfg.UseMessageRetry(r =>
+		{
+			r.Incremental(
+				5,
+				TimeSpan.Zero,
+				TimeSpan.FromSeconds(5));
+			r.Ignore<ValidationException>();
+		});
+
+		cfg.ConfigureEndpoints(context);
+	});
+});
+//builder.AddMassTransitRabbitMq("rabbitmq", massTransitConfiguration: masstransitConfiguration =>
+//{
+//	masstransitConfiguration.AddEntityFrameworkOutbox<MasstransitDbContext>(outboxConfiguration =>
+//	{
+//		outboxConfiguration
+//			.UsePostgres()
+//			.UseBusOutbox();
+//	});
+//});
+builder.Services.AddTransient<IStartupTask, MigrateDatabaseStartupTask>();
 
 builder.Services.AddHostedService<StartupTaskRunner>();
 

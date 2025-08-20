@@ -8,9 +8,17 @@ var postgres = builder.AddPostgres("database")
 	.WithPgWeb()
 	.AddDatabase("postgres");
 
+var rabbitMq = builder.AddRabbitMQ("rabbitmq")
+	.WithDataVolume()
+	.WithLifetime(ContainerLifetime.Persistent)
+	.WithManagementPlugin()
+	.WithOtlpExporter();
+
 var apiService = builder.AddProject<Projects.ModularMonolithPoC_ApiService>("apiservice")
 	.WithReference(postgres)
-	.WaitFor(postgres);
+	.WaitFor(postgres)
+	.WithReference(rabbitMq)
+	.WaitFor(rabbitMq);
 
 builder.AddProject<Projects.ModularMonolithPoC_Web>("webfrontend")
 	.WithExternalHttpEndpoints()

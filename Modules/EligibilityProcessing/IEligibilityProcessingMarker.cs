@@ -1,2 +1,2 @@
 ﻿namespace ModularMonolithPoC.EligibilityProcessing;
-internal interface IEligibilityProcessingMarker;
+public interface IEligibilityProcessingMarker;
