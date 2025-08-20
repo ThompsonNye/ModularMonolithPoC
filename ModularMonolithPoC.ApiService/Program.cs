@@ -26,14 +26,13 @@ builder.Services.AddMassTransit(x =>
 	//x.AddConsumersFromAssemblyContaining<IEligibilityProcessingMarker>();
 	x.AddConsumers([typeof(IEligibilityProcessingMarker).Assembly]);
 
-	//x.AddEntityFrameworkOutbox<MasstransitDbContext>(o =>
-	//{
-	//	o.QueryDelay = TimeSpan.FromSeconds(5);
-	//	o.DuplicateDetectionWindow = TimeSpan.FromMinutes(30);
-	//	o.UsePostgres()
-	//		.UseBusOutbox();
-	//});
-	x.AddInMemoryInboxOutbox();
+	x.AddEntityFrameworkOutbox<MasstransitDbContext>(o =>
+	{
+		o.QueryDelay = TimeSpan.FromSeconds(5);
+		o.DuplicateDetectionWindow = TimeSpan.FromMinutes(30);
+		o.UsePostgres();
+		o.UseBusOutbox();
+	});
 
 	x.UsingRabbitMq((context, cfg) =>
 	{
@@ -81,16 +80,11 @@ builder.Services.AddMassTransit(x =>
 		cfg.ConfigureEndpoints(context);
 	});
 });
-//builder.AddMassTransitRabbitMq("rabbitmq", massTransitConfiguration: masstransitConfiguration =>
-//{
-//	masstransitConfiguration.AddEntityFrameworkOutbox<MasstransitDbContext>(outboxConfiguration =>
-//	{
-//		outboxConfiguration
-//			.UsePostgres()
-//			.UseBusOutbox();
-//	});
-//});
 builder.Services.AddTransient<IStartupTask, ModularMonolithPoC.ApiService.MigrateDatabaseStartupTask>();
+builder.Services.AddOpenTelemetry()
+	.WithMetrics(b => b.AddMeter(MassTransit.Logging.DiagnosticHeaders.DefaultListenerName))
+	.WithTracing(o => o
+		.AddSource(MassTransit.Logging.DiagnosticHeaders.DefaultListenerName));
 
 builder.Services.AddHostedService<StartupTaskRunner>();
 
