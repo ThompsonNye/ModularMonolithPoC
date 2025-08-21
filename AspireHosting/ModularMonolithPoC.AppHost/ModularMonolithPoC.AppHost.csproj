@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\ModularMonolithPoC.ApiService\ModularMonolithPoC.ApiService.csproj" />
-    <ProjectReference Include="..\..\ModularMonolithPoC.Web\ModularMonolithPoC.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>

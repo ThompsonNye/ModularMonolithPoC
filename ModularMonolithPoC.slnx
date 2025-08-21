@@ -15,5 +15,4 @@
   <Project Path="ModularMonolithPoC.ApiService.Contracts/ModularMonolithPoC.ApiService.Contracts.csproj" />
   <Project Path="ModularMonolithPoC.ApiService/ModularMonolithPoC.ApiService.csproj" />
   <Project Path="ModularMonolithPoC.Tests/ModularMonolithPoC.Tests.csproj" />
-  <Project Path="ModularMonolithPoC.Web/ModularMonolithPoC.Web.csproj" />
 </Solution>
