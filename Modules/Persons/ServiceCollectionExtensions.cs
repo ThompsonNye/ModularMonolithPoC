@@ -83,6 +83,13 @@ public static class ServiceRegistrationExtensions
 			}
 
 			personsDbContext.Persons.Remove(person);
+
+			var personDeletedEvent = new PersonDeleted
+			{
+				PersonId = person.Id
+			};
+			await publishEndpoint.Publish(personDeletedEvent, cancellationToken);
+
 			await personsDbContext.SaveChangesAsync(cancellationToken);
 
 			return TypedResults.NoContent();
