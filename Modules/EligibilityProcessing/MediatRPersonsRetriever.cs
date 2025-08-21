@@ -11,7 +11,7 @@ internal sealed class MediatRPersonsRetriever(
 {
 	public async Task<ICollection<Person>> GetAllPersonsAsync(CancellationToken cancellationToken)
 	{
-		using var activity = activitySource.StartActivity();
+		using var activity = activitySource.StartActivity("Get all Persons - Mediator");
 
 		ICollection<PersonDto> personDtos;
 		using (var getPersonsViaMediatRActivity = activitySource.StartActivity($"Query MediatR: {nameof(ListAllPersonsQuery)}"))
@@ -27,4 +27,3 @@ internal sealed class MediatRPersonsRetriever(
 		return persons;
 	}
 }
-

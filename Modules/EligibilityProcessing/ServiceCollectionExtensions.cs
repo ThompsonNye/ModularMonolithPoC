@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ModularMonolithPoC.ApiService.Contracts;
@@ -11,8 +12,9 @@ public static class ServiceRegistrationExtensions
 	{
 		builder.AddNpgsqlDbContext<MaterializedPersonsDbContext>("postgres");
 
-		builder.Services.AddScoped<IPersonsRetriever, MediatRPersonsRetriever>();
-		builder.Services.AddTransient<IStartupTask, MigrateDatabaseStartupTask>();
+		builder.Services.AddKeyedScoped<IPersonsRetriever, MediatRPersonsRetriever>(nameof(MediatRPersonsRetriever));
+        builder.Services.AddKeyedScoped<IPersonsRetriever, MaterializedViewPersonsRetriever>(nameof(MaterializedViewPersonsRetriever));
+        builder.Services.AddTransient<IStartupTask, MigrateDatabaseStartupTask>();
 
 		return builder;
 	}
@@ -27,10 +29,16 @@ public static class ServiceRegistrationExtensions
 	{
 		var eligibilityApis = app.MapGroup("/eligibility");
 
-		eligibilityApis.MapGet("/all/mediatr", GetAllPersonsWithEligibility);
+		eligibilityApis.MapGet("/all-persons", GetAllPersonsWithEligibility);
 
-		async Task<IResult> GetAllPersonsWithEligibility(IPersonsRetriever personsRetriever, CancellationToken cancellationToken)
+		async Task<IResult> GetAllPersonsWithEligibility([FromQuery] bool? useMediator, IServiceProvider serviceProvider, CancellationToken cancellationToken)
 		{
+			var personsRetrieverServiceKey = (useMediator ?? false)
+				? nameof(MediatRPersonsRetriever)
+				: nameof(MaterializedViewPersonsRetriever);
+
+			var personsRetriever = serviceProvider.GetRequiredKeyedService<IPersonsRetriever>(personsRetrieverServiceKey);
+
 			var persons = await personsRetriever.GetAllPersonsAsync(cancellationToken);
 
 			var random = new Random(42);
