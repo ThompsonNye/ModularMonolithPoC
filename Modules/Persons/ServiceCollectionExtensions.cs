@@ -40,6 +40,7 @@ public static class ServiceRegistrationExtensions
 
 		personsApis.MapGet("/", GetPersonsAsync);
 		personsApis.MapPost("/", CreatePersonAsync);
+		personsApis.MapPut("/{personId}", UpdatePersonAsync);
 		personsApis.MapDelete("/{personId}", DeletePersonAsync);
 
 		async Task<IResult> GetPersonsAsync(PersonsDbContext db, CancellationToken cancellationToken)
@@ -71,6 +72,29 @@ public static class ServiceRegistrationExtensions
 			await personsDbContext.SaveChangesAsync(cancellationToken);
 
 			return TypedResults.Created("/persons", person);
+		}
+
+		async Task<IResult> UpdatePersonAsync(Guid personId, Person person, PersonsDbContext personsDbContext, IPublishEndpoint publishEndpoint, CancellationToken cancellationToken)
+		{
+			var personInDb = await personsDbContext.Persons.FindAsync([personId], cancellationToken);
+
+			if (personInDb is null)
+			{
+				return TypedResults.NotFound();
+			}
+
+			personInDb.Name = person.Name;
+
+			var personUpdatedEvent = new PersonUpdated
+			{
+				PersonId = personInDb.Id,
+				Name = personInDb.Name
+			};
+			await publishEndpoint.Publish(personUpdatedEvent, cancellationToken);
+
+			await personsDbContext.SaveChangesAsync(cancellationToken);
+
+			return TypedResults.Ok(personInDb);
 		}
 
 		async Task<IResult> DeletePersonAsync(Guid personId, PersonsDbContext personsDbContext, IPublishEndpoint publishEndpoint, CancellationToken cancellationToken)
