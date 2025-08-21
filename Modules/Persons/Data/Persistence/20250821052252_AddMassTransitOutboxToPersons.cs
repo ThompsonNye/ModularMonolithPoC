@@ -4,16 +4,17 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace ModularMonolithPoC.ApiService.Data.Persistence
+namespace ModularMonolithPoC.Persons.Data.Persistence
 {
     /// <inheritdoc />
-    public partial class InitialMasstransitOutboxEntities : Migration
+    public partial class AddMassTransitOutboxToPersons : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
                 name: "InboxState",
+                schema: "persons",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
@@ -37,6 +38,7 @@ namespace ModularMonolithPoC.ApiService.Data.Persistence
 
             migrationBuilder.CreateTable(
                 name: "OutboxState",
+                schema: "persons",
                 columns: table => new
                 {
                     OutboxId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -53,6 +55,7 @@ namespace ModularMonolithPoC.ApiService.Data.Persistence
 
             migrationBuilder.CreateTable(
                 name: "OutboxMessage",
+                schema: "persons",
                 columns: table => new
                 {
                     SequenceNumber = table.Column<long>(type: "bigint", nullable: false)
@@ -84,44 +87,52 @@ namespace ModularMonolithPoC.ApiService.Data.Persistence
                     table.ForeignKey(
                         name: "FK_OutboxMessage_InboxState_InboxMessageId_InboxConsumerId",
                         columns: x => new { x.InboxMessageId, x.InboxConsumerId },
+                        principalSchema: "persons",
                         principalTable: "InboxState",
                         principalColumns: new[] { "MessageId", "ConsumerId" });
                     table.ForeignKey(
                         name: "FK_OutboxMessage_OutboxState_OutboxId",
                         column: x => x.OutboxId,
+                        principalSchema: "persons",
                         principalTable: "OutboxState",
                         principalColumn: "OutboxId");
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_InboxState_Delivered",
+                schema: "persons",
                 table: "InboxState",
                 column: "Delivered");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OutboxMessage_EnqueueTime",
+                schema: "persons",
                 table: "OutboxMessage",
                 column: "EnqueueTime");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OutboxMessage_ExpirationTime",
+                schema: "persons",
                 table: "OutboxMessage",
                 column: "ExpirationTime");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OutboxMessage_InboxMessageId_InboxConsumerId_SequenceNumber",
+                schema: "persons",
                 table: "OutboxMessage",
                 columns: new[] { "InboxMessageId", "InboxConsumerId", "SequenceNumber" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_OutboxMessage_OutboxId_SequenceNumber",
+                schema: "persons",
                 table: "OutboxMessage",
                 columns: new[] { "OutboxId", "SequenceNumber" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_OutboxState_Created",
+                schema: "persons",
                 table: "OutboxState",
                 column: "Created");
         }
@@ -130,13 +141,16 @@ namespace ModularMonolithPoC.ApiService.Data.Persistence
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "OutboxMessage");
+                name: "OutboxMessage",
+                schema: "persons");
 
             migrationBuilder.DropTable(
-                name: "InboxState");
+                name: "InboxState",
+                schema: "persons");
 
             migrationBuilder.DropTable(
-                name: "OutboxState");
+                name: "OutboxState",
+                schema: "persons");
         }
     }
 }

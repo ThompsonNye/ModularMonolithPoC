@@ -16,6 +16,15 @@ public static class ServiceRegistrationExtensions
 
 		builder.Services.AddTransient<IStartupTask, MigrateDatabaseStartupTask>();
 
+		builder.Services.AddMassTransit(x =>
+		{
+			x.AddEntityFrameworkOutbox<PersonsDbContext>(o =>
+			{
+				o.UsePostgres();
+				o.UseBusOutbox();
+			});
+		});
+
 		return builder;
 	}
 
@@ -52,9 +61,6 @@ public static class ServiceRegistrationExtensions
 
 			personsDbContext.Persons.Add(person);
 
-			// TODO: Remove when using transactional outbox
-			await personsDbContext.SaveChangesAsync(cancellationToken);
-
 			var personCreatedEvent = new PersonCreated
 			{
 				PersonId = person.Id,
@@ -62,8 +68,7 @@ public static class ServiceRegistrationExtensions
 			};
 			await publishEndpoint.Publish(personCreatedEvent, cancellationToken);
 
-			// TODO: Uncomment when using transactional outbox
-			//await personsDbContext.SaveChangesAsync(cancellationToken);
+			await personsDbContext.SaveChangesAsync(cancellationToken);
 
 			return TypedResults.Created("/persons", person);
 		}

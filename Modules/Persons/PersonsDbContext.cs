@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MassTransit;
+using Microsoft.EntityFrameworkCore;
 
 namespace ModularMonolithPoC.Persons;
 
@@ -11,5 +12,10 @@ internal sealed class PersonsDbContext(DbContextOptions<PersonsDbContext> option
 		modelBuilder.ApplyConfigurationsFromAssembly(typeof(IPersonsMarker).Assembly);
 
 		modelBuilder.HasDefaultSchema("persons");
+
+		AddMassTransit(modelBuilder);
 	}
+
+	private static void AddMassTransit(ModelBuilder modelBuilder)
+		=> modelBuilder.AddTransactionalOutboxEntities();
 }
