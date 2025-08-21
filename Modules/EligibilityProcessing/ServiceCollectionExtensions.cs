@@ -41,14 +41,17 @@ public static class ServiceRegistrationExtensions
 
 			var persons = await personsRetriever.GetAllPersonsAsync(cancellationToken);
 
-			var random = new Random(42);
-
 			var personsEligibility = persons
-				.Select(p => new PersonEligibility
-				{
-					Name = p.Name,
-					Score = (byte)random.Next(101)
-				});
+				.Select(p =>
+                {
+                    var random = new Random(p.Id.GetHashCode());
+
+                    return new PersonEligibility
+                    {
+                        Name = p.Name,
+                        Score = (byte)random.Next(101)
+                    };
+                });
 
 			return TypedResults.Ok(personsEligibility);
 		}
