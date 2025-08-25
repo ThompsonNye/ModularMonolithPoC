@@ -9,6 +9,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\AspireHosting\ModularMonolithPoC.ServiceDefaults\ModularMonolithPoC.ServiceDefaults.csproj" />
 		<ProjectReference Include="..\Modules\EligibilityProcessing\ModularMonolithPoC.EligibilityProcessing.csproj" />
+		<ProjectReference Include="..\Modules\ModularMonolithPoC.PersonsAccessorWithDispatchR\ModularMonolithPoC.PersonsAccessorWithDispatchR.csproj" />
 		<ProjectReference Include="..\Modules\Persons\ModularMonolithPoC.Persons.csproj" />
 	</ItemGroup>
 

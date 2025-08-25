@@ -1,4 +1,5 @@
-﻿using MassTransit;
+﻿using DispatchR.Extensions;
+using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,8 @@ public static class ServiceRegistrationExtensions
 	public static WebApplicationBuilder AddPersonsModule(this WebApplicationBuilder builder)
 	{
 		builder.AddNpgsqlDbContext<PersonsDbContext>("postgres");
+
+		builder.Services.AddDispatchR(typeof(IPersonsMarker).Assembly, withNotifications: true);
 
 		builder.Services.AddTransient<IStartupTask, MigrateDatabaseStartupTask>();
 

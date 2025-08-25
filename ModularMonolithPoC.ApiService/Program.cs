@@ -1,8 +1,8 @@
 using MassTransit;
 using ModularMonolithPoC.ApiService;
-using ModularMonolithPoC.ApiService.Contracts;
 using ModularMonolithPoC.EligibilityProcessing;
 using ModularMonolithPoC.Persons;
+using ModularMonolithPoC.PersonsAccessorWithDispatchR;
 using System.ComponentModel.DataAnnotations;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +12,7 @@ builder.AddServiceDefaults();
 
 builder.AddPersonsModule();
 builder.AddEligibilityProcessingModule();
+builder.AddPersonsAccessorWithDispatchRModule();
 
 builder.Services.AddMediatR(cfg =>
 {
@@ -95,5 +96,6 @@ app.MapDefaultEndpoints();
 
 app.UsePersonsModule();
 app.UseEligibilityProcessingModule();
+app.UsePersonsAccessorWithDispatchRModule();
 
 app.Run();

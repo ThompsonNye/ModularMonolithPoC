@@ -12,6 +12,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.4.1" />
+		<PackageReference Include="DispatchR.Mediator" Version="2.0.0" />
 		<PackageReference Include="MassTransit.EntityFrameworkCore" Version="8.5.2" />
 		<PackageReference Include="MediatR" Version="12.5.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />

@@ -6,6 +6,7 @@
   <Folder Name="/Modules/">
     <Project Path="Modules/EligibilityProcessing/ModularMonolithPoC.EligibilityProcessing.csproj" Id="b937f635-bcee-404c-a550-2d29ad0c0dea" />
     <Project Path="Modules/ModularMonolithPoC.Persons.Contracts/ModularMonolithPoC.Persons.Contracts.csproj" Id="4c90dae8-23d7-40fb-8baa-ed1c21077b95" />
+    <Project Path="Modules/ModularMonolithPoC.PersonsAccessorWithDispatchR/ModularMonolithPoC.PersonsAccessorWithDispatchR.csproj" Id="43b6aad3-916b-40a3-909f-47d396ccf8d2" />
     <Project Path="Modules/Persons/ModularMonolithPoC.Persons.csproj" Id="645b5d06-f9b8-423b-8177-751110e24e87" />
   </Folder>
   <Folder Name="/_Solution Items/">
