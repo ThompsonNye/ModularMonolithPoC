@@ -1,5 +1,4 @@
-﻿using JasperFx.Core.Reflection;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,24 +8,24 @@ using Wolverine;
 using Wolverine.RabbitMQ;
 
 namespace ModularMonolithPoC.EligibilityProcessing;
-public static class ServiceRegistrationExtensions
+public static class DependencyInjectionExtensions
 {
 	public static WebApplicationBuilder AddEligibilityProcessingModule(this WebApplicationBuilder builder)
 	{
 		builder.AddNpgsqlDbContext<MaterializedPersonsDbContext>("postgres");
 
 		builder.Services.AddKeyedScoped<IPersonsRetriever, MediatRPersonsRetriever>(nameof(MediatRPersonsRetriever));
-        builder.Services.AddKeyedScoped<IPersonsRetriever, MaterializedViewPersonsRetriever>(nameof(MaterializedViewPersonsRetriever));
-        builder.Services.AddTransient<IStartupTask, MigrateDatabaseStartupTask>();
+		builder.Services.AddKeyedScoped<IPersonsRetriever, MaterializedViewPersonsRetriever>(nameof(MaterializedViewPersonsRetriever));
+		builder.Services.AddTransient<IStartupTask, MigrateDatabaseStartupTask>();
 
 		return builder;
 	}
-	
+
 	public static WolverineOptions ConfigureEligibilityProcessingModule(this WolverineOptions options)
 	{
 		options.Discovery.IncludeAssembly(typeof(IEligibilityProcessingMarker).Assembly);
 		options.Discovery.CustomizeHandlerDiscovery(x => x.Includes.IsNotPublic());
-		
+
 		options.ListenToRabbitQueue("eligibility.person-created-queue");
 		options.ListenToRabbitQueue("eligibility.person-updated-queue");
 		options.ListenToRabbitQueue("eligibility.person-deleted-queue");
@@ -58,15 +57,15 @@ public static class ServiceRegistrationExtensions
 
 			var personsEligibility = persons
 				.Select(p =>
-                {
-                    var random = new Random(p.Id.GetHashCode());
+				{
+					var random = new Random(p.Id.GetHashCode());
 
-                    return new PersonEligibility
-                    {
-                        Name = p.Name,
-                        Score = (byte)random.Next(101)
-                    };
-                });
+					return new PersonEligibility
+					{
+						Name = p.Name,
+						Score = (byte)random.Next(101)
+					};
+				});
 
 			return TypedResults.Ok(personsEligibility);
 		}

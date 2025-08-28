@@ -10,7 +10,7 @@ using Wolverine;
 using Wolverine.RabbitMQ;
 
 namespace ModularMonolithPoC.Persons;
-public static class ServiceRegistrationExtensions
+public static class DependencyInjectionExtensions
 {
 	public static WebApplicationBuilder AddPersonsModule(this WebApplicationBuilder builder)
 	{
@@ -25,26 +25,26 @@ public static class ServiceRegistrationExtensions
 
 	public static WolverineOptions ConfigurePersonsModule(this WolverineOptions options)
 	{
-        options.PublishMessage<PersonCreated>().ToRabbitExchange("person-created-exchange", exchange =>
-        {
-	        exchange.ExchangeType = ExchangeType.Fanout;
-	        exchange.BindQueue("eligibility.person-created-queue");
-        });
-        options.PublishMessage<PersonUpdated>().ToRabbitExchange("person-updated-exchange", exchange =>
-        {
-	        exchange.ExchangeType = ExchangeType.Fanout;
-	        exchange.BindQueue("eligibility.person-updated-queue");
-        });
-        options.PublishMessage<PersonDeleted>().ToRabbitExchange("person-deleted-exchange", exchange =>
-        {
-	        exchange.ExchangeType = ExchangeType.Fanout;
-	        exchange.BindQueue("eligibility.person-deleted-queue");
-        });
+		options.PublishMessage<PersonCreated>().ToRabbitExchange("person-created-exchange", exchange =>
+		{
+			exchange.ExchangeType = ExchangeType.Fanout;
+			exchange.BindQueue("eligibility.person-created-queue");
+		});
+		options.PublishMessage<PersonUpdated>().ToRabbitExchange("person-updated-exchange", exchange =>
+		{
+			exchange.ExchangeType = ExchangeType.Fanout;
+			exchange.BindQueue("eligibility.person-updated-queue");
+		});
+		options.PublishMessage<PersonDeleted>().ToRabbitExchange("person-deleted-exchange", exchange =>
+		{
+			exchange.ExchangeType = ExchangeType.Fanout;
+			exchange.BindQueue("eligibility.person-deleted-queue");
+		});
 
-        return options;
-    }
+		return options;
+	}
 
-    public static WebApplication UsePersonsModule(this WebApplication app)
+	public static WebApplication UsePersonsModule(this WebApplication app)
 	{
 		MapEndpoints(app);
 		return app;
