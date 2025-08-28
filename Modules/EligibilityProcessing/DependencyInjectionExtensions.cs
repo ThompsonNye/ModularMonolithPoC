@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ModularMonolithPoC.ApiService.Contracts;
+using ModularMonolithPoC.Persons.Contracts;
 using System.Diagnostics;
 using Wolverine;
 using Wolverine.RabbitMQ;
@@ -29,15 +30,15 @@ public static class DependencyInjectionExtensions
 
 		options.ListenToRabbitQueue("eligibility.person-created-queue", queue =>
 		{
-			queue.BindExchange("person-created-exchange");
+			queue.BindExchange(MessagingConstants.Exchanges.PersonCreatedExchange);
 		});
 		options.ListenToRabbitQueue("eligibility.person-updated-queue", queue =>
 		{
-			queue.BindExchange("person-updated-exchange");
+			queue.BindExchange(MessagingConstants.Exchanges.PersonUpdatedExchange);
 		});
 		options.ListenToRabbitQueue("eligibility.person-deleted-queue", queue =>
 		{
-			queue.BindExchange("person-deleted-exchange");
+			queue.BindExchange(MessagingConstants.Exchanges.PersonDeletedExchange);
 		});
 
 		return options;
