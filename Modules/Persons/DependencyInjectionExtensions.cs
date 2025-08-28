@@ -28,17 +28,14 @@ public static class DependencyInjectionExtensions
 		options.PublishMessage<PersonCreated>().ToRabbitExchange("person-created-exchange", exchange =>
 		{
 			exchange.ExchangeType = ExchangeType.Fanout;
-			exchange.BindQueue("eligibility.person-created-queue");
 		});
 		options.PublishMessage<PersonUpdated>().ToRabbitExchange("person-updated-exchange", exchange =>
 		{
 			exchange.ExchangeType = ExchangeType.Fanout;
-			exchange.BindQueue("eligibility.person-updated-queue");
 		});
 		options.PublishMessage<PersonDeleted>().ToRabbitExchange("person-deleted-exchange", exchange =>
 		{
 			exchange.ExchangeType = ExchangeType.Fanout;
-			exchange.BindQueue("eligibility.person-deleted-queue");
 		});
 
 		return options;

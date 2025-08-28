@@ -27,9 +27,19 @@ public static class DependencyInjectionExtensions
 		options.Discovery.IncludeAssembly(typeof(IEligibilityProcessingMarker).Assembly);
 		options.Discovery.CustomizeHandlerDiscovery(x => x.Includes.IsNotPublic());
 
-		options.ListenToRabbitQueue("eligibility.person-created-queue");
-		options.ListenToRabbitQueue("eligibility.person-updated-queue");
-		options.ListenToRabbitQueue("eligibility.person-deleted-queue");
+
+		options.ListenToRabbitQueue("eligibility.person-created-queue", queue =>
+		{
+			queue.BindExchange("person-created-exchange");
+		});
+		options.ListenToRabbitQueue("eligibility.person-updated-queue", queue =>
+		{
+			queue.BindExchange("person-updated-exchange");
+		});
+		options.ListenToRabbitQueue("eligibility.person-deleted-queue", queue =>
+		{
+			queue.BindExchange("person-deleted-exchange");
+		});
 
 		return options;
 	}
