@@ -27,7 +27,6 @@ public static class DependencyInjectionExtensions
 		options.Discovery.IncludeAssembly(typeof(IEligibilityProcessingMarker).Assembly);
 		options.Discovery.CustomizeHandlerDiscovery(x => x.Includes.IsNotPublic());
 
-
 		options.ListenToRabbitQueue("eligibility.person-created-queue", queue =>
 		{
 			queue.BindExchange("person-created-exchange");

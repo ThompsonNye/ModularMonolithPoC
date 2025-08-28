@@ -25,18 +25,9 @@ public static class DependencyInjectionExtensions
 
 	public static WolverineOptions ConfigurePersonsModule(this WolverineOptions options)
 	{
-		options.PublishMessage<PersonCreated>().ToRabbitExchange("person-created-exchange", exchange =>
-		{
-			exchange.ExchangeType = ExchangeType.Fanout;
-		});
-		options.PublishMessage<PersonUpdated>().ToRabbitExchange("person-updated-exchange", exchange =>
-		{
-			exchange.ExchangeType = ExchangeType.Fanout;
-		});
-		options.PublishMessage<PersonDeleted>().ToRabbitExchange("person-deleted-exchange", exchange =>
-		{
-			exchange.ExchangeType = ExchangeType.Fanout;
-		});
+		options.PublishMessage<PersonCreated>().ToRabbitExchange("person-created-exchange");
+		options.PublishMessage<PersonUpdated>().ToRabbitExchange("person-updated-exchange");
+		options.PublishMessage<PersonDeleted>().ToRabbitExchange("person-deleted-exchange");
 
 		return options;
 	}
