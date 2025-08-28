@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using JasperFx.Core.Reflection;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ModularMonolithPoC.ApiService.Contracts;
+using Wolverine;
+using Wolverine.RabbitMQ;
 
 namespace ModularMonolithPoC.EligibilityProcessing;
 public static class ServiceRegistrationExtensions
@@ -17,6 +20,18 @@ public static class ServiceRegistrationExtensions
         builder.Services.AddTransient<IStartupTask, MigrateDatabaseStartupTask>();
 
 		return builder;
+	}
+	
+	public static WolverineOptions ConfigureEligibilityProcessingModule(this WolverineOptions options)
+	{
+		options.Discovery.IncludeAssembly(typeof(IEligibilityProcessingMarker).Assembly);
+		options.Discovery.CustomizeHandlerDiscovery(x => x.Includes.IsNotPublic());
+		
+		options.ListenToRabbitQueue("eligibility.person-created-queue");
+		options.ListenToRabbitQueue("eligibility.person-updated-queue");
+		options.ListenToRabbitQueue("eligibility.person-deleted-queue");
+
+		return options;
 	}
 
 	public static WebApplication UseEligibilityProcessingModule(this WebApplication app)

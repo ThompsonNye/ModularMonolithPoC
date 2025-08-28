@@ -1,13 +1,15 @@
 ﻿using Microsoft.Extensions.Logging;
 using ModularMonolithPoC.Persons.Contracts;
+using Wolverine;
 
 namespace ModularMonolithPoC.EligibilityProcessing;
 
-internal sealed class PersonUpdatedConsumer(
+public sealed class PersonUpdatedHandler(
 	MaterializedPersonsDbContext materializedPersonsDbContext,
-	ILogger<PersonUpdatedConsumer> logger)
+	ILogger<PersonUpdatedHandler> logger)
+	: IWolverineHandler
 {
-	public async Task Consume(PersonUpdated personUpdated, CancellationToken cancellationToken)
+	public async Task Handle(PersonUpdated personUpdated, CancellationToken cancellationToken)
 	{
 		var person = await materializedPersonsDbContext.Persons.FindAsync([personUpdated.PersonId], cancellationToken);
 
