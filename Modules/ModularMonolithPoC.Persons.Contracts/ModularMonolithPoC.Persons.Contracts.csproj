@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <PackageReference Include="DispatchR.Mediator.Abstractions" Version="2.0.0" />
-    <PackageReference Include="MediatR.Contracts" Version="2.0.1" />
   </ItemGroup>
 
 </Project>

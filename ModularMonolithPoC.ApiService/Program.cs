@@ -1,6 +1,5 @@
 using ModularMonolithPoC.EligibilityProcessing;
 using ModularMonolithPoC.Persons;
-using ModularMonolithPoC.PersonsAccessorWithDispatchR;
 using Wolverine;
 using Wolverine.RabbitMQ;
 
@@ -11,25 +10,24 @@ builder.AddServiceDefaults();
 
 builder.AddPersonsModule();
 builder.AddEligibilityProcessingModule();
-builder.AddPersonsAccessorWithDispatchRModule();
 
 builder.Services.AddMediatR(cfg => { cfg.RegisterServicesFromAssemblyContaining<IPersonsMarker>(); });
 
 builder.UseWolverine(options =>
 {
-    options
-        .UseRabbitMqUsingNamedConnection("rabbitmq")
-        .AutoProvision();
+	options
+		.UseRabbitMqUsingNamedConnection("rabbitmq")
+		.AutoProvision();
 
-    options
-        .ConfigurePersonsModule()
-        .ConfigureEligibilityProcessingModule();
+	options
+		.ConfigurePersonsModule()
+		.ConfigureEligibilityProcessingModule();
 });
 
 builder.Services.AddOpenTelemetry()
-    .WithMetrics(b => b.AddMeter("Wolverine"))
-    .WithTracing(o => o
-        .AddSource("Wolverine"));
+	.WithMetrics(b => b.AddMeter("Wolverine"))
+	.WithTracing(o => o
+		.AddSource("Wolverine"));
 
 builder.Services.AddHostedService<StartupTaskRunner>();
 
@@ -46,13 +44,12 @@ app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+	app.MapOpenApi();
 }
 
 app.MapDefaultEndpoints();
 
 app.UsePersonsModule();
 app.UseEligibilityProcessingModule();
-app.UsePersonsAccessorWithDispatchRModule();
 
 app.Run();

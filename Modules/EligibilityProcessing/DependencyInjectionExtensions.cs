@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ModularMonolithPoC.ApiService.Contracts;
+using System.Diagnostics;
 using Wolverine;
 using Wolverine.RabbitMQ;
 
@@ -14,7 +15,7 @@ public static class DependencyInjectionExtensions
 	{
 		builder.AddNpgsqlDbContext<MaterializedPersonsDbContext>("postgres");
 
-		builder.Services.AddKeyedScoped<IPersonsRetriever, MediatRPersonsRetriever>(nameof(MediatRPersonsRetriever));
+		builder.Services.AddKeyedScoped<IPersonsRetriever, DispatchRPersonsRetriever>(nameof(DispatchRPersonsRetriever));
 		builder.Services.AddKeyedScoped<IPersonsRetriever, MaterializedViewPersonsRetriever>(nameof(MaterializedViewPersonsRetriever));
 		builder.Services.AddTransient<IStartupTask, MigrateDatabaseStartupTask>();
 
@@ -48,10 +49,12 @@ public static class DependencyInjectionExtensions
 		async Task<IResult> GetAllPersonsWithEligibility([FromQuery] bool? useMediator, IServiceProvider serviceProvider, CancellationToken cancellationToken)
 		{
 			var personsRetrieverServiceKey = (useMediator ?? false)
-				? nameof(MediatRPersonsRetriever)
+				? nameof(DispatchRPersonsRetriever)
 				: nameof(MaterializedViewPersonsRetriever);
 
 			var personsRetriever = serviceProvider.GetRequiredKeyedService<IPersonsRetriever>(personsRetrieverServiceKey);
+
+			Activity.Current?.SetTag("PersonsRetriever", personsRetriever.GetType().Name);
 
 			var persons = await personsRetriever.GetAllPersonsAsync(cancellationToken);
 

@@ -1,4 +1,4 @@
-﻿using MediatR;
+﻿using DispatchR.Abstractions.Send;
 using Microsoft.EntityFrameworkCore;
 using ModularMonolithPoC.Persons.Contracts;
 using System.Diagnostics;
@@ -8,7 +8,7 @@ namespace ModularMonolithPoC.Persons;
 internal class ListAllPersonsQueryHandler(
 	PersonsDbContext personsDbContext,
 	ActivitySource activitySource)
-	: IRequestHandler<ListAllPersonsQuery, ICollection<PersonDto>>
+	: IRequestHandler<ListAllPersonsQuery, Task<ICollection<PersonDto>>>
 {
 	public async Task<ICollection<PersonDto>> Handle(ListAllPersonsQuery request, CancellationToken cancellationToken)
 	{
