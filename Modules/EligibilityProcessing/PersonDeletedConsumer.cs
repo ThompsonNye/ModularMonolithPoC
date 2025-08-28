@@ -1,5 +1,4 @@
-﻿using MassTransit;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using ModularMonolithPoC.Persons.Contracts;
 
 namespace ModularMonolithPoC.EligibilityProcessing;
@@ -7,11 +6,10 @@ namespace ModularMonolithPoC.EligibilityProcessing;
 internal sealed class PersonDeletedConsumer(
 	MaterializedPersonsDbContext materializedPersonsDbContext,
 	ILogger<PersonUpdatedConsumer> logger)
-	: IConsumer<PersonDeleted>
 {
-	public async Task Consume(ConsumeContext<PersonDeleted> context)
+	public async Task Consume(PersonDeleted personDeleted, CancellationToken cancellationToken)
 	{
-		var person = await materializedPersonsDbContext.Persons.FindAsync([context.Message.PersonId], context.CancellationToken);
+		var person = await materializedPersonsDbContext.Persons.FindAsync([personDeleted.PersonId], cancellationToken);
 
 		if (person is null)
 		{
@@ -20,6 +18,6 @@ internal sealed class PersonDeletedConsumer(
 		}
 
 		materializedPersonsDbContext.Persons.Remove(person);
-		await materializedPersonsDbContext.SaveChangesAsync(context.CancellationToken);
+		await materializedPersonsDbContext.SaveChangesAsync(cancellationToken);
 	}
 }

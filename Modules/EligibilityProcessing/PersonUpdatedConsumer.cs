@@ -1,5 +1,4 @@
-﻿using MassTransit;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using ModularMonolithPoC.Persons.Contracts;
 
 namespace ModularMonolithPoC.EligibilityProcessing;
@@ -7,11 +6,10 @@ namespace ModularMonolithPoC.EligibilityProcessing;
 internal sealed class PersonUpdatedConsumer(
 	MaterializedPersonsDbContext materializedPersonsDbContext,
 	ILogger<PersonUpdatedConsumer> logger)
-	: IConsumer<PersonUpdated>
 {
-	public async Task Consume(ConsumeContext<PersonUpdated> context)
+	public async Task Consume(PersonUpdated personUpdated, CancellationToken cancellationToken)
 	{
-		var person = await materializedPersonsDbContext.Persons.FindAsync([context.Message.PersonId], context.CancellationToken);
+		var person = await materializedPersonsDbContext.Persons.FindAsync([personUpdated.PersonId], cancellationToken);
 
 		if (person is null)
 		{
@@ -19,16 +17,16 @@ internal sealed class PersonUpdatedConsumer(
 
 			person = new Person
 			{
-				Id = context.Message.PersonId,
-				Name = context.Message.Name,
+				Id = personUpdated.PersonId,
+				Name = personUpdated.Name,
 			};
 
 			materializedPersonsDbContext.Persons.Add(person);
-			await materializedPersonsDbContext.SaveChangesAsync(context.CancellationToken);
+			await materializedPersonsDbContext.SaveChangesAsync(cancellationToken);
 			return;
 		}
 
-		person.Name = context.Message.Name;
-		await materializedPersonsDbContext.SaveChangesAsync(context.CancellationToken);
+		person.Name = personUpdated.Name;
+		await materializedPersonsDbContext.SaveChangesAsync(cancellationToken);
 	}
 }

@@ -1,5 +1,4 @@
 ﻿using DispatchR.Extensions;
-using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ModularMonolithPoC.ApiService.Contracts;
 using ModularMonolithPoC.Persons.Contracts;
+using Wolverine;
+using Wolverine.RabbitMQ;
 
 namespace ModularMonolithPoC.Persons;
 public static class ServiceRegistrationExtensions
@@ -19,19 +20,22 @@ public static class ServiceRegistrationExtensions
 
 		builder.Services.AddTransient<IStartupTask, MigrateDatabaseStartupTask>();
 
-		builder.Services.AddMassTransit(x =>
-		{
-			x.AddEntityFrameworkOutbox<PersonsDbContext>(o =>
-			{
-				o.UsePostgres();
-				o.UseBusOutbox();
-			});
-		});
-
 		return builder;
 	}
 
-	public static WebApplication UsePersonsModule(this WebApplication app)
+	public static WolverineOptions ConfigurePersonsModule(this WolverineOptions options)
+	{
+        options.PublishMessage<PersonCreated>().ToRabbitExchange("person-created-exchange", exchange =>
+        {
+            //exchange.ExchangeType = ExchangeType.Fanout;
+        });
+        options.PublishMessage<PersonUpdated>().ToRabbitExchange("person-updated-exchange");
+        options.PublishMessage<PersonDeleted>().ToRabbitExchange("person-deleted-exchange");
+
+        return options;
+    }
+
+    public static WebApplication UsePersonsModule(this WebApplication app)
 	{
 		MapEndpoints(app);
 		return app;
@@ -52,7 +56,7 @@ public static class ServiceRegistrationExtensions
 			return TypedResults.Ok(persons);
 		}
 
-		async Task<IResult> CreatePersonAsync(Person person, PersonsDbContext personsDbContext, IPublishEndpoint publishEndpoint, CancellationToken cancellationToken)
+		async Task<IResult> CreatePersonAsync(Person person, PersonsDbContext personsDbContext, IMessageBus messageBus, CancellationToken cancellationToken)
 		{
 			var exists = await personsDbContext.Persons.AnyAsync(
 			p => p.Id == person.Id || p.Name.ToLower() == person.Name.ToLower(),
@@ -70,14 +74,14 @@ public static class ServiceRegistrationExtensions
 				PersonId = person.Id,
 				Name = person.Name
 			};
-			await publishEndpoint.Publish(personCreatedEvent, cancellationToken);
-
 			await personsDbContext.SaveChangesAsync(cancellationToken);
+
+			await messageBus.PublishAsync(personCreatedEvent);
 
 			return TypedResults.Created("/persons", person);
 		}
 
-		async Task<IResult> UpdatePersonAsync(Guid personId, Person person, PersonsDbContext personsDbContext, IPublishEndpoint publishEndpoint, CancellationToken cancellationToken)
+		async Task<IResult> UpdatePersonAsync(Guid personId, Person person, PersonsDbContext personsDbContext, IMessageBus messageBus, CancellationToken cancellationToken)
 		{
 			var personInDb = await personsDbContext.Persons.FindAsync([personId], cancellationToken);
 
@@ -93,14 +97,14 @@ public static class ServiceRegistrationExtensions
 				PersonId = personInDb.Id,
 				Name = personInDb.Name
 			};
-			await publishEndpoint.Publish(personUpdatedEvent, cancellationToken);
+			await messageBus.PublishAsync(personUpdatedEvent);
 
 			await personsDbContext.SaveChangesAsync(cancellationToken);
 
 			return TypedResults.Ok(personInDb);
 		}
 
-		async Task<IResult> DeletePersonAsync(Guid personId, PersonsDbContext personsDbContext, IPublishEndpoint publishEndpoint, CancellationToken cancellationToken)
+		async Task<IResult> DeletePersonAsync(Guid personId, PersonsDbContext personsDbContext, IMessageBus messageBus, CancellationToken cancellationToken)
 		{
 			var person = await personsDbContext.Persons.FindAsync([personId], cancellationToken);
 
@@ -115,7 +119,7 @@ public static class ServiceRegistrationExtensions
 			{
 				PersonId = person.Id
 			};
-			await publishEndpoint.Publish(personDeletedEvent, cancellationToken);
+			await messageBus.PublishAsync(personDeletedEvent);
 
 			await personsDbContext.SaveChangesAsync(cancellationToken);
 

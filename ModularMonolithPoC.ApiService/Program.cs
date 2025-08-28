@@ -1,9 +1,8 @@
-using MassTransit;
-using ModularMonolithPoC.ApiService;
 using ModularMonolithPoC.EligibilityProcessing;
 using ModularMonolithPoC.Persons;
 using ModularMonolithPoC.PersonsAccessorWithDispatchR;
-using System.ComponentModel.DataAnnotations;
+using Wolverine;
+using Wolverine.RabbitMQ;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,60 +18,19 @@ builder.Services.AddMediatR(cfg =>
 	cfg.RegisterServicesFromAssemblyContaining<IPersonsMarker>();
 });
 
-builder.Services.AddMassTransit(x =>
+builder.UseWolverine(o =>
 {
-	x.SetKebabCaseEndpointNameFormatter();
+	o.ConfigurePersonsModule();
 
-	x.AddConsumersFromAssemblyContaining<IEligibilityProcessingMarker>();
-
-	x.UsingRabbitMq((context, cfg) =>
-	{
-		var rabbitMqConnectionString = builder.Configuration.GetConnectionString("rabbitmq");
-		var rabbitMqUri = new Uri(rabbitMqConnectionString!);
-
-		var userInfo = rabbitMqUri.UserInfo;
-		var firstColonIndex = userInfo.IndexOf(':');
-		if (firstColonIndex == -1)
-		{
-			throw new ArgumentException("Could not identify username and password from rabbit mq connection string");
-		}
-
-		var username = userInfo[..firstColonIndex];
-		var password = userInfo[(firstColonIndex + 1)..];
-
-		cfg.Host(
-			new Uri($"{rabbitMqUri.Scheme}://{rabbitMqUri.Host}:{rabbitMqUri.Port}"),
-			"/",
-			hostConfig =>
-			{
-				hostConfig.Username(username);
-				hostConfig.Password(password);
-			});
-
-		cfg.UseDelayedRedelivery(r =>
-		{
-			r.Intervals(
-				TimeSpan.FromMinutes(5),
-				TimeSpan.FromMinutes(15),
-				TimeSpan.FromMinutes(30));
-			r.Ignore<ValidationException>();
-		});
-		cfg.UseMessageRetry(r =>
-		{
-			r.Incremental(
-				5,
-				TimeSpan.Zero,
-				TimeSpan.FromSeconds(5));
-			r.Ignore<ValidationException>();
-		});
-
-		cfg.ConfigureEndpoints(context);
-	});
+    o
+        .UseRabbitMqUsingNamedConnection("rabbitmq")
+        .AutoProvision();
 });
+
 builder.Services.AddOpenTelemetry()
-	.WithMetrics(b => b.AddMeter(MassTransit.Logging.DiagnosticHeaders.DefaultListenerName))
+	.WithMetrics(b => b.AddMeter("Wolverine"))
 	.WithTracing(o => o
-		.AddSource(MassTransit.Logging.DiagnosticHeaders.DefaultListenerName));
+		.AddSource("Wolverine"));
 
 builder.Services.AddHostedService<StartupTaskRunner>();
 

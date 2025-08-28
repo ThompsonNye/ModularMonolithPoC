@@ -1,10 +1,6 @@
-﻿using MassTransit;
+﻿namespace ModularMonolithPoC.Persons.Contracts;
 
-namespace ModularMonolithPoC.Persons.Contracts;
-
-public sealed record PersonDeleted : CorrelatedBy<Guid>
+public sealed record PersonDeleted
 {
-	public Guid CorrelationId => PersonId;
-
 	public required Guid PersonId { get; init; }
 }

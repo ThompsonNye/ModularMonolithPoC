@@ -1,18 +1,16 @@
-﻿using MassTransit;
-using ModularMonolithPoC.Persons.Contracts;
+﻿using ModularMonolithPoC.Persons.Contracts;
 
 namespace ModularMonolithPoC.EligibilityProcessing;
 internal sealed class PersonCreatedConsumer(MaterializedPersonsDbContext materializedPersonsDbContext)
-	: IConsumer<PersonCreated>
 {
-	public async Task Consume(ConsumeContext<PersonCreated> context)
+	public async Task Consume(PersonCreated personCreated, CancellationToken cancellationToken)
 	{
 		var person = new Person
 		{
-			Id = context.Message.PersonId,
-			Name = context.Message.Name,
+			Id = personCreated.PersonId,
+			Name = personCreated.Name,
 		};
 		materializedPersonsDbContext.Persons.Add(person);
-		await materializedPersonsDbContext.SaveChangesAsync(context.CancellationToken);
+		await materializedPersonsDbContext.SaveChangesAsync(cancellationToken);
 	}
 }
