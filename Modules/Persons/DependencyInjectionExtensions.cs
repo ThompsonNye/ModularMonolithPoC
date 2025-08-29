@@ -102,9 +102,9 @@ public static class DependencyInjectionExtensions
 				PersonId = personInDb.Id,
 				Name = personInDb.Name
 			};
-			await messageBus.PublishAsync(personUpdatedEvent);
-
 			await personsDbContext.SaveChangesAsync(cancellationToken);
+
+			await messageBus.PublishAsync(personUpdatedEvent);
 
 			return TypedResults.Ok(personInDb);
 		}
@@ -124,9 +124,9 @@ public static class DependencyInjectionExtensions
 			{
 				PersonId = person.Id
 			};
-			await messageBus.PublishAsync(personDeletedEvent);
-
 			await personsDbContext.SaveChangesAsync(cancellationToken);
+
+			await messageBus.PublishAsync(personDeletedEvent);
 
 			return TypedResults.NoContent();
 		}
