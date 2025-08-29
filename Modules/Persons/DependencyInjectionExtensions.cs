@@ -42,10 +42,18 @@ public static class DependencyInjectionExtensions
 	{
 		var personsApis = app.MapGroup("/persons");
 
-		personsApis.MapGet("/", GetPersonsAsync);
-		personsApis.MapPost("/", CreatePersonAsync);
-		personsApis.MapPut("/{personId}", UpdatePersonAsync);
-		personsApis.MapDelete("/{personId}", DeletePersonAsync);
+		personsApis
+			.MapGet("/", GetPersonsAsync)
+			.WithName("Get all persons");
+		personsApis
+			.MapPost("/", CreatePersonAsync)
+			.WithName("Create person");
+		personsApis
+			.MapPut("/{personId}", UpdatePersonAsync)
+			.WithName("Update person");
+		personsApis
+			.MapDelete("/{personId}", DeletePersonAsync)
+			.WithName("Delete person");
 
 		async Task<IResult> GetPersonsAsync(PersonsDbContext db, CancellationToken cancellationToken)
 		{

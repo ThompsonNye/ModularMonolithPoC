@@ -54,7 +54,9 @@ public static class DependencyInjectionExtensions
 	{
 		var eligibilityApis = app.MapGroup("/eligibility");
 
-		eligibilityApis.MapGet("/all-persons", GetAllPersonsWithEligibility);
+		eligibilityApis
+			.MapGet("/all-persons", GetAllPersonsWithEligibility)
+			.WithName("Get all persons with eligibility");
 
 		async Task<IResult> GetAllPersonsWithEligibility([FromQuery] bool? useMediator, IServiceProvider serviceProvider, CancellationToken cancellationToken)
 		{
